@@ -9,6 +9,8 @@ public class ComunicacionMusicSP {
     private wc3270 comunicacion;
     private static String ip = "155.210.152.51";
     private static String puerto = "3270";
+    
+    
 
     private static ComunicacionMusicSP instancia = null;
 
@@ -33,16 +35,14 @@ public class ComunicacionMusicSP {
         //y devolverá FALSE
     	System.out.println("Comprobando nombre usuario");
         comunicacion.escribirCadena(usuario);
-        TimeUnit.SECONDS.sleep(5);
-        //sleep(10);
         comunicacion.enter();
-        TimeUnit.SECONDS.sleep(5);
-        //sleep(10);
+        Thread.sleep(comunicacion.millis);
         System.out.println("Enter terminado");
         if (comunicacion.buscarCadena("Userid is not authorized")) {
         	System.out.println("Userid is not authorized");
             comunicacion.teclaFuncion(3);//Prueba
             comunicacion.enter();
+            Thread.sleep(comunicacion.millis);
             return false;
         }
         //Escribe la contraseña
@@ -50,12 +50,13 @@ public class ComunicacionMusicSP {
         //y devolverá FALSE
         System.out.println("Comprobando contraseña");
         comunicacion.escribirCadena(contraseña);
-        TimeUnit.SECONDS.sleep(5);
         comunicacion.enter();
-        TimeUnit.SECONDS.sleep(5);
-        if (comunicacion.buscarCadena("Password incorrect!")) {
+        Thread.sleep(comunicacion.millis);
+        if (comunicacion.buscarCadena("Password incorrect")) {
+        	System.out.println("Password incorrect");
             comunicacion.teclaFuncion(3);//Prueba
             comunicacion.enter();
+            Thread.sleep(comunicacion.millis);
             return false;
         }
         System.out.println("Contraseña comprobada");
@@ -81,8 +82,9 @@ public class ComunicacionMusicSP {
 	}
 
 	public void comenzarPrograma() throws Exception {
-        comunicacion.escribirCadena("tasks2.job");
-        comunicacion.enter();
+        //comunicacion.escribirCadena("tasks2.job");
+        //comunicacion.enter();
+		System.out.println("Programa comenzado");
     }
 
     public void logout() {

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class wc3270 implements wc3270Class {
@@ -19,7 +21,9 @@ public class wc3270 implements wc3270Class {
     protected static final String OK = "OK";
     protected static final String ASCII = "ascii";
     protected static final String MORE = "More...";
-    protected static final String CADENA_CONEXION = "connect %s:%s";	
+    protected static final String CADENA_CONEXION = "connect %s:%s";
+    
+    public long millis= 100;
 
     private static wc3270 instancia = null;
     
@@ -48,8 +52,12 @@ public class wc3270 implements wc3270Class {
     public StringBuilder leerPantalla() {
         StringBuilder cadena = new StringBuilder();
         try {
-            while (lectura.available() == 0); //Espera a que se llene el buffer
+            while (lectura.available() == 0) { //Espera a que se llene el buffer
+            	//System.out.println("lectura.available() == 0");
+            	
+            }; 
             while (lectura.available() > 0) {
+            	//System.out.println("lectura.available() > 0");
                 cadena.append((char) lectura.read());
             }
         } catch (IOException ex) {
@@ -57,6 +65,7 @@ public class wc3270 implements wc3270Class {
         } finally {
             return cadena;
         }
+        
     }
 
     @Override
@@ -90,7 +99,7 @@ public class wc3270 implements wc3270Class {
     @Override
     public void escribirLinea(String cadena) {
         //do {
-            cadena += "\n";
+            //cadena += "\n";
             System.out.println("Intentando escribir " + cadena);
             this.teclado.write(cadena);
             //this.teclado.println(cadena);
@@ -104,14 +113,23 @@ public class wc3270 implements wc3270Class {
     public void escribirLineaNoEsperaOK(String cadena) {
         cadena += "\n";
         this.teclado.write(cadena);
-        this.teclado.println(cadena);
+        //this.teclado.println(cadena);
         this.teclado.flush();
     }
 
     @Override
     public boolean buscarCadena(String cadena) {
         ascii();
-        return leerPantalla().toString().contains(cadena);
+        System.out.println("Intentando buscar " + cadena);
+        if(leerPantalla().toString().contains(cadena)) {
+        	 System.out.println("Cadena encontrada");
+        	 return true;
+        }
+        else {
+        	return false;
+        }
+        
+        //return leerPantalla().toString().contains(cadena);
     }
 	
     @Override
@@ -120,12 +138,12 @@ public class wc3270 implements wc3270Class {
         String cadenaConexion = String.format(CADENA_CONEXION, ip, puerto);
         escribirLinea(cadenaConexion);
         enter();
-        /*try {
-			procesoWc3270.wait(10000);
+        try {
+			Thread.sleep(millis);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
-        System.out.println("Exito de conectar");
+		}
+        System.out.println("Exito al conectar");
     }
 }
