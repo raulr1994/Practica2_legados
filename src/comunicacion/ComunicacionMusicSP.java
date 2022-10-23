@@ -9,8 +9,6 @@ public class ComunicacionMusicSP {
     private wc3270 comunicacion;
     private static String ip = "155.210.152.51";
     private static String puerto = "3270";
-    
-    
 
     private static ComunicacionMusicSP instancia = null;
 

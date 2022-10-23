@@ -10,7 +10,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class wc3270 implements wc3270Class {
-	public String ws3270exe = "C:\\Program Files\\wc3270\\wc3270.exe";
+	//public String ws3270exe = "C:\\Program Files\\wc3270\\wc3270.exe";
+	
+	public String ws3270exe = "C:\\Program Files\\x3270is\\s3270.exe";
+	//public String ws3270exe = "cmd";
 	
 	protected Process procesoWc3270;
 	protected InputStream lectura; //Enviar comandos
@@ -98,13 +101,13 @@ public class wc3270 implements wc3270Class {
 
     @Override
     public void escribirLinea(String cadena) {
-        //do {
-            //cadena += "\n";
-            System.out.println("Intentando escribir " + cadena);
+        do {
+            cadena += "\n";
+            //System.out.println("Intentando escribir " + cadena);
+            //this.teclado.write("Script("+cadena+")");
             this.teclado.write(cadena);
-            //this.teclado.println(cadena);
             this.teclado.flush();
-        //} while (leerPantalla().toString().contains(OK));
+        } while (leerPantalla().toString().contains(OK));
         System.out.println("Exito de escritura");
         //Espera una señal de OK o de MORE...
     }
@@ -121,7 +124,9 @@ public class wc3270 implements wc3270Class {
     public boolean buscarCadena(String cadena) {
         ascii();
         System.out.println("Intentando buscar " + cadena);
-        if(leerPantalla().toString().contains(cadena)) {
+        String busqueda = leerPantalla().toString();
+    	System.out.println("Cadena leida " + busqueda);        
+        if(busqueda.contains(cadena)){
         	 System.out.println("Cadena encontrada");
         	 return true;
         }
@@ -145,5 +150,14 @@ public class wc3270 implements wc3270Class {
 			e.printStackTrace();
 		}
         System.out.println("Exito al conectar");
+    }
+    
+    public void assertConnected() {
+        if (instancia == null) {
+            throw new RuntimeException("not connected");
+        }
+        else {
+        	System.out.println("Objeto creado con exito");
+        }
     }
 }

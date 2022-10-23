@@ -1,6 +1,8 @@
 package main;
 
 
+
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -21,11 +23,10 @@ public class Main {
     static wc3270 comunicacionWS = wc3270.getInstancia();
     static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
     AppLegada appLegada = AppLegada.getInstancia(comunicacionWS);
-	
-	
 
 	public static void main(String[] args) throws IOException {
 		try {
+			comunicacionWS.assertConnected();
             logearse();
         } catch (Exception e) {
             e.printStackTrace();
@@ -34,6 +35,7 @@ public class Main {
 	
     private static void logearse() throws Exception {
     	comunicacionSP.conectar();
+    	Thread.sleep(100);
         final String usuario = "grupo_09";
         final String contraseña = "secreto6";
         System.out.println("intentando login");
