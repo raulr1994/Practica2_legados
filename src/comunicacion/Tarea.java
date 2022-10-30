@@ -31,6 +31,6 @@ public class Tarea {
     }
 
     public String toString() {
-        return "Num: " + numeroTarea + "Nombre: " + nombre + "Descripcion: " + descripcion + "fecha: " + fecha;
+        return "Num: " + numeroTarea + " Nombre: " + nombre + " Descripcion: " + descripcion + " Fecha: " + fecha;
     }
 }

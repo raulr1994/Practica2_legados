@@ -37,12 +37,13 @@ public class ComunicacionMusicSP {
         Thread.sleep(comunicacion.millis);
         System.out.println("Enter terminado");
         if (comunicacion.buscarCadena("Userid is not authorized")) {
-        	System.out.println("Userid is not authorized");
+        	//System.out.println("Userid is not authorized");
             comunicacion.teclaFuncion(3);//Prueba
             comunicacion.enter();
             Thread.sleep(comunicacion.millis);
             return false;
         }
+        System.out.println("Usuario comprobado");
         //Escribe la contraseña
         //Si no es válida pulsa F3 y Enter para limpiar campos
         //y devolverá FALSE
@@ -51,7 +52,7 @@ public class ComunicacionMusicSP {
         comunicacion.enter();
         Thread.sleep(comunicacion.millis);
         if (comunicacion.buscarCadena("Password incorrect")) {
-        	System.out.println("Password incorrect");
+        	//System.out.println("Password incorrect");
             comunicacion.teclaFuncion(3);//Prueba
             comunicacion.enter();
             Thread.sleep(comunicacion.millis);
@@ -66,29 +67,44 @@ public class ComunicacionMusicSP {
         System.out.println("Userid is not in use.");
         //Si la contraseña es válida devolverá TRUE
         //y ejecutará el programa
+        //System.out.println(verPantalla());
+        
         if (comunicacion.buscarCadena("Press ENTER to continue...")) {
             comunicacion.enter();
+            Thread.sleep(500);
+            //comunicacion.verTodo();
             comenzarPrograma();
             return true;
         }
         return false;
     }
 
-    private void sleep(int i) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void comenzarPrograma() throws Exception {
-        //comunicacion.escribirCadena("tasks2.job");
-        //comunicacion.enter();
-		System.out.println("Programa comenzado");
+		comunicacion.escribirCadena("tareas.c");
+        comunicacion.enter();
+        Thread.sleep(500);
+        //comunicacion.verTodo();
+        //System.out.println(verPantalla());
+		//System.out.println("Programa comenzado");
+		//finalizarPrograma();
     }
 
-    public void logout() {
-        comunicacion.teclaFuncion(3);
+    public void finalizarPrograma() {
+    	comunicacion.escribirCadena("3");
+    	comunicacion.enter();
+    	Sincronizador.waitSyncro(1);
         comunicacion.escribirCadena("off");
-        comunicacion.enter();
+        //comunicacion.enter();
+        comunicacion.teclaFuncion(3);
+        try {
+			Thread.sleep(comunicacion.millis);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        System.out.println(verPantalla());
+        System.out.println("Programa finalizado");
+        comunicacion.cerrarProceso();
     }
 
     public String verPantalla() {

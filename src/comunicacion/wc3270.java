@@ -1,8 +1,10 @@
 package comunicacion;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -12,11 +14,12 @@ import java.util.concurrent.TimeUnit;
 public class wc3270 implements wc3270Class {
 	//public String ws3270exe = "C:\\Program Files\\wc3270\\wc3270.exe";
 	
-	public String ws3270exe = "C:\\Program Files\\x3270is\\s3270.exe";
+	//public String s3270 = "C:\\Program Files\\x3270is\\s3270.exe";
 	//public String ws3270exe = "cmd";
+	public String s3270 = "C:\\Program Files\\wc3270\\s3270.exe";
 	
-	protected Process procesoWc3270;
-	protected InputStream lectura; //Enviar comandos
+	protected Process procesoS3270;
+	protected static InputStream lectura; //Enviar comandos
     protected PrintWriter teclado; //Recibir respuestas de la terminal
     
     protected final String ENTER = "ENTER"; // tecla enter
@@ -32,11 +35,11 @@ public class wc3270 implements wc3270Class {
     
     protected wc3270() {
         try {
-            this.procesoWc3270 = Runtime.getRuntime().exec(ws3270exe);
-            lectura = this.procesoWc3270.getInputStream();
-            teclado = new PrintWriter(new OutputStreamWriter(this.procesoWc3270.getOutputStream()));
+            this.procesoS3270 = Runtime.getRuntime().exec(s3270); //proceso
+            lectura = this.procesoS3270.getInputStream(); //salida
+            teclado = new PrintWriter(new OutputStreamWriter(this.procesoS3270.getOutputStream())); //entrada
         } catch (FileNotFoundException ef) {
-            System.err.println("Error, ejecutable ws3270.exe no encontrado");
+            System.err.println("Error, ejecutable s3270.exe no encontrado");
             System.exit(1);
         } catch (IOException ex) {
             System.err.println("Error, no se pudo conectar con ws3270.exe");
@@ -67,8 +70,7 @@ public class wc3270 implements wc3270Class {
             cadena = null;
         } finally {
             return cadena;
-        }
-        
+        }  
     }
 
     @Override
@@ -104,11 +106,10 @@ public class wc3270 implements wc3270Class {
         do {
             cadena += "\n";
             //System.out.println("Intentando escribir " + cadena);
-            //this.teclado.write("Script("+cadena+")");
             this.teclado.write(cadena);
+            //this.teclado.println(cadena);
             this.teclado.flush();
         } while (leerPantalla().toString().contains(OK));
-        System.out.println("Exito de escritura");
         //Espera una señal de OK o de MORE...
     }
     
@@ -123,11 +124,11 @@ public class wc3270 implements wc3270Class {
     @Override
     public boolean buscarCadena(String cadena) {
         ascii();
-        System.out.println("Intentando buscar " + cadena);
+        //System.out.println("Intentando buscar " + cadena);
         String busqueda = leerPantalla().toString();
-    	System.out.println("Cadena leida " + busqueda);        
+    	//System.out.println("Cadena leida " + busqueda);        
         if(busqueda.contains(cadena)){
-        	 System.out.println("Cadena encontrada");
+        	 //System.out.println("Cadena encontrada");
         	 return true;
         }
         else {
@@ -139,7 +140,7 @@ public class wc3270 implements wc3270Class {
 	
     @Override
     public void conectar(String ip, String puerto) throws RuntimeException {
-    	System.out.println("Intento de conectar");
+    	//System.out.println("Intento de conectar");
         String cadenaConexion = String.format(CADENA_CONEXION, ip, puerto);
         escribirLinea(cadenaConexion);
         enter();
@@ -149,7 +150,7 @@ public class wc3270 implements wc3270Class {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        System.out.println("Exito al conectar");
+        //System.out.println("Exito al conectar");
     }
     
     public void assertConnected() {
@@ -159,5 +160,87 @@ public class wc3270 implements wc3270Class {
         else {
         	System.out.println("Objeto creado con exito");
         }
+    }
+    
+    public void verTodo() {
+    	ascii();
+	    BufferedReader inBufReader= new BufferedReader(new InputStreamReader(lectura));
+	    String response="";
+	    while (true) {
+			try {
+				response = inBufReader.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    		if(response.equals("ok")) {
+	    			break;
+	    		}
+	    		System.out.println( response );
+	    }
+		try {
+			inBufReader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+   }
+    
+    synchronized public static void Sincronizador(int n){//method synchronized
+		   int temp = 1;
+		   for(int i=1;i<=5;i++){
+				try {
+					if(lectura.available()>0) {
+						 break;
+					 }
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		     temp = n*temp;
+		     try{  
+		      Thread.sleep(500);  
+		     }catch(Exception e){System.out.println(e);}  
+		   }  
+	}
+    
+    /*public void purificarPantalla() {
+    	ascii();
+	    BufferedReader inBufReader= new BufferedReader(new InputStreamReader(lectura));
+	    String response="";
+	    while (true) {
+			try {
+				response = inBufReader.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    		if(response.equals("ok")) {
+	    			try {
+						response = inBufReader.readLine();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	    			break;
+	    		}
+	    		System.out.println( response );
+	    }
+		try {
+			inBufReader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }*/
+    
+    void cerrarProceso() {
+    	try {
+			lectura.close();
+			teclado.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 }
