@@ -4,6 +4,8 @@ public interface wc3270Class {
 	
     StringBuilder leerPantalla();
     
+    String leerPantallaS();
+    
     void enter();
     
     void ascii();
@@ -21,4 +23,6 @@ public interface wc3270Class {
     boolean buscarCadena(String cadena);	
 	
 	void conectar(String ip, String puerto) throws RuntimeException;
+	
+	void limpiarEntrada();
 }

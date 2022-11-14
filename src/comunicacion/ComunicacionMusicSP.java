@@ -28,6 +28,8 @@ public class ComunicacionMusicSP {
     }
 
     public boolean login(String usuario, String contraseña) throws Exception {
+    	usuario = "grupo_09";
+    	contraseña = "secreto6";
         //Escribe el nombre de usuario
         //Si no es válido pulsa F3 y Enter para limpiar campos
         //y devolverá FALSE

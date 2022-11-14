@@ -8,12 +8,16 @@ import java.util.concurrent.TimeoutException;
 
 public class Sincronizador {
 		synchronized public static void waitSyncro(int n){//method synchronized
-		   int temp = 1;
+		   /*int temp = 1;
 		   for(int i=1;i<=5;i++){
 		     temp = n*temp;
 		     try{  
-		      Thread.sleep(500);  
+		      Thread.sleep(100);  
 		     }catch(Exception e){System.out.println(e);}  
-		   }  
-		 }    
+		   }*/
+		   try{  
+			      Thread.sleep(n);  
+			     }catch(Exception e){System.out.println(e);} 
+		 } 
+		
 }

@@ -13,14 +13,14 @@ import java.util.concurrent.TimeUnit;
 
 public class wc3270 implements wc3270Class {
 	//public String ws3270exe = "C:\\Program Files\\wc3270\\wc3270.exe";
-	
 	//public String s3270 = "C:\\Program Files\\x3270is\\s3270.exe";
 	//public String ws3270exe = "cmd";
 	public String s3270 = "C:\\Program Files\\wc3270\\s3270.exe";
 	
-	protected Process procesoS3270;
-	protected static InputStream lectura; //Enviar comandos
-    protected PrintWriter teclado; //Recibir respuestas de la terminal
+	protected Process procesoS3270=null;
+	protected static InputStream lectura=null; //Enviar comandos
+	protected static BufferedReader leerLectura=null;
+    protected PrintWriter teclado=null; //Recibir respuestas de la terminal
     
     protected final String ENTER = "ENTER"; // tecla enter
     private final String FUNCTION_KEY = "PF(%d)"; // tecla F3
@@ -37,7 +37,8 @@ public class wc3270 implements wc3270Class {
         try {
             this.procesoS3270 = Runtime.getRuntime().exec(s3270); //proceso
             lectura = this.procesoS3270.getInputStream(); //salida
-            teclado = new PrintWriter(new OutputStreamWriter(this.procesoS3270.getOutputStream())); //entrada
+            teclado = new PrintWriter(new OutputStreamWriter(this.procesoS3270.getOutputStream(), "ISO-8859-1")); //entrada
+            leerLectura = new BufferedReader(new InputStreamReader(lectura, "ISO-8859-1"));
         } catch (FileNotFoundException ef) {
             System.err.println("Error, ejecutable s3270.exe no encontrado");
             System.exit(1);
@@ -58,18 +59,103 @@ public class wc3270 implements wc3270Class {
     public StringBuilder leerPantalla() {
         StringBuilder cadena = new StringBuilder();
         try {
-            while (lectura.available() == 0) { //Espera a que se llene el buffer
-            	//System.out.println("lectura.available() == 0");
-            	
-            }; 
+            while (lectura.available() == 0); //Espera a que se llene el buffer
             while (lectura.available() > 0) {
-            	//System.out.println("lectura.available() > 0");
                 cadena.append((char) lectura.read());
             }
         } catch (IOException ex) {
             cadena = null;
         } finally {
             return cadena;
+        }
+    }
+    
+   /* @Override
+    public StringBuilder leerPantalla() {
+        StringBuilder cadena = new StringBuilder();
+        StringBuilder cadena2 = new StringBuilder();
+        String leido=null;
+        final List<String> lines = new ArrayList<String>();
+        int nLinea = 0 ;
+        try {
+            while (lectura.available() == 0) { //Espera a que se llene el buffer
+            	//System.out.println("lectura.available() == 0");     	
+            }; 
+            while (lectura.available() > 0) {
+            	final String line = leerLectura.readLine();
+            	System.out.println("Linea " + nLinea + " " + line);
+                //cadena.append((char) lectura.read());
+                lines.add(line);
+                //System.out.println("cadena leida " + cadena.toString());
+                Sincronizador.waitSyncro(0);
+            }
+        } catch (IOException ex) {
+            cadena = null;
+        } finally {
+            return cadena;
+        }  
+    }*/
+    
+    /*private StringBuilder leerLetra() { //Leer letra a letra hasta detectar un $ cuando lo detecta, añadir un salto de línea
+    	StringBuilder cadena = new StringBuilder();
+    	byte[] arraybytes = null;
+    	try {
+            while (lectura.available() == 0) { //Espera a que se llene el buffer           	
+            }; 
+            if (lectura.available() > 0) { //Mientras alla algo que leer leera
+            	cadena.append((char) lectura.read(arraybytes,0,1)); //Lee un byte(letra)
+                Sincronizador.waitSyncro(0);
+            }
+        } catch (IOException ex) {
+            cadena = null;
+        } finally {
+        	
+            return cadena;
+        }
+    	
+    }
+    
+    public String leerPantallaZ() {
+    	
+    }*/
+    
+    
+    @Override
+    public String leerPantallaS(){
+    	assertConnected();
+    	String line= null;
+    	String pantalla="Hola";
+    	final List<String> lines = new ArrayList<String>();
+    	int nLinea = 0;
+    	try {
+	    	while(lectura.available() > 0) {
+	    		try {
+	    		line = leerLectura.readLine();
+	    		//System.out.println("Linea " + nLinea + " " + line);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	    		if(line == null) {
+	    			throw new RuntimeException("s3270 process not responding");
+	    		}
+	    		if(line.contains("TASK " + nLinea)) {
+	    		//if(line.startsWith("data: TASK " + nLinea)/* && line.endsWith("$")*/) {
+	    			System.out.println("Linea " + nLinea + " " + line);
+	    			lines.add(line);
+	    			nLinea++;
+	    		}
+	    		Sincronizador.waitSyncro(1000);
+	    	}
+	    	/*final int size = lines.size();
+	        if (size > 0) {
+	            return pantalla;
+	        } else {
+	            throw new RuntimeException("no output received by screen");
+	        }*/
+	    	return pantalla;
+    	} catch (IOException ex) {
+            return null;
         }  
     }
 
@@ -99,18 +185,27 @@ public class wc3270 implements wc3270Class {
     @Override
     public void escribirCadena(String cadena) {
         escribirLinea("string " + cadena);
+        
     }
 
     @Override
     public void escribirLinea(String cadena) {
+    	boolean esOK;
+    	String linea = null;
         do {
             cadena += "\n";
             //System.out.println("Intentando escribir " + cadena);
             this.teclado.write(cadena);
             //this.teclado.println(cadena);
             this.teclado.flush();
-        } while (leerPantalla().toString().contains(OK));
+            ascii();
+        	linea = leerPantalla().toString();
+            //System.out.println(linea);
+        	esOK = linea.contains(OK);
+        } while (esOK);
+        	//} while (leerPantalla().toString().contains(OK));
         //Espera una señal de OK o de MORE...
+        Sincronizador.waitSyncro(100);
     }
     
     @Override
@@ -186,54 +281,6 @@ public class wc3270 implements wc3270Class {
 		}
    }
     
-    synchronized public static void Sincronizador(int n){//method synchronized
-		   int temp = 1;
-		   for(int i=1;i<=5;i++){
-				try {
-					if(lectura.available()>0) {
-						 break;
-					 }
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-		     temp = n*temp;
-		     try{  
-		      Thread.sleep(500);  
-		     }catch(Exception e){System.out.println(e);}  
-		   }  
-	}
-    
-    /*public void purificarPantalla() {
-    	ascii();
-	    BufferedReader inBufReader= new BufferedReader(new InputStreamReader(lectura));
-	    String response="";
-	    while (true) {
-			try {
-				response = inBufReader.readLine();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	    		if(response.equals("ok")) {
-	    			try {
-						response = inBufReader.readLine();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	    			break;
-	    		}
-	    		System.out.println( response );
-	    }
-		try {
-			inBufReader.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }*/
-    
     void cerrarProceso() {
     	try {
 			lectura.close();
@@ -242,5 +289,30 @@ public class wc3270 implements wc3270Class {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    }
+    
+    @Override
+	public  void limpiarEntrada() {
+    	System.out.println("Limpiando entrada");
+    	String pantalla = null;
+    	String linea = null;
+    	boolean esOK;
+    	boolean moreEncontrado=false;
+    	while(!moreEncontrado) {
+	        do {
+	            enter();
+	            ascii();
+	        	linea = leerPantalla().toString();
+	        	//System.out.println(linea);
+	        	pantalla += linea;
+	        	esOK = linea.contains(OK);
+	        } while (esOK);
+	        moreEncontrado = pantalla.contains(MORE);
+	        Sincronizador.waitSyncro(100);
+    	}
+		enter();
+    	escribirCadena("3"); //Salir a mainMenu
+    	enter();
+    	Sincronizador.waitSyncro(250);
     }
 }
