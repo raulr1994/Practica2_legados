@@ -46,30 +46,61 @@ public class PantallaPrincipal extends JFrame {
 			public void run() {
 				try {
 					comunicacionWS.assertConnected();
-		            logearse();
+		            if(logearse()){
+		            	System.out.println("Se ha podido loguear");
+		            	try {
+							PantallaPrincipal frame = new PantallaPrincipal();
+							frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+		            }
+		            else {
+		            	System.out.println("No se ha podido loguear");
+		            }
 		        } catch (Exception e) {
 		            e.printStackTrace();
 		        }
-				try {
-					PantallaPrincipal frame = new PantallaPrincipal();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
 		});
 	}
 
-	public void mostrarTareasEspecificas() {
-		ArrayList<Tarea> nuevoListadoTareas = appLegada.obtenerListadoTareasEspecificas();
-		for(int i = 0; i < nuevoListadoTareas.size(); i++) {
-            System.out.println(nuevoListadoTareas.get(i).getNumeroTarea() + " " + nuevoListadoTareas.get(i).getNombre() + " " + 
-            		nuevoListadoTareas.get(i).getFecha() + " " + nuevoListadoTareas.get(i).getDescripcion());
-        }
+	public void mostrarTareas() {
+		ArrayList<Tarea> nuevoListadoTareasE = appLegada.obtenerListadoTareasEspecificas();
+		ArrayList<Tarea> nuevoListadoTareasG = appLegada.obtenerListadoTareasGenerales();
+		if(nuevoListadoTareasE.size()>0) {
+			for(int i = 0; i < nuevoListadoTareasE.size(); i++) {
+	            System.out.println(nuevoListadoTareasE.get(i).getNumeroTarea() + " " + nuevoListadoTareasE.get(i).getNombre() + " " + 
+	            		nuevoListadoTareasE.get(i).getFecha() + " " + nuevoListadoTareasE.get(i).getDescripcion());
+	        }
+		}
+		if(nuevoListadoTareasG.size()>0) {
+			for(int i = 0; i < nuevoListadoTareasG.size(); i++) {
+	            System.out.println(nuevoListadoTareasG.get(i).getNumeroTarea() + " " + nuevoListadoTareasG.get(i).getNombre() + " " + 
+	            		nuevoListadoTareasG.get(i).getFecha() + " " + nuevoListadoTareasG.get(i).getDescripcion());
+	        }
+		}
+		
 	}
 	/**
 	 * Create the frame.
 	 */
+	void crearEspecifica() {
+		appLegada.crearTareaEspecifica("11","12","Tarea1","Prueba1E$");
+		Sincronizador.waitSyncro(9500);
+		comunicacionWS.limpiarEntrada();
+		Sincronizador.waitSyncro(9500);
+		System.out.println("Tarea especifica creada");
+	}
+	
+	void crearGeneral(){
+		appLegada.crearTareaGeneral("11","12","Prueba1G$");
+		Sincronizador.waitSyncro(9500);
+		comunicacionWS.limpiarEntrada();
+		Sincronizador.waitSyncro(9500);
+		System.out.println("Tarea general creada");
+	}
+	
 	public PantallaPrincipal() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -86,31 +117,25 @@ public class PantallaPrincipal extends JFrame {
 		btnEspecifica.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					appLegada.crearTareaEspecifica("11","12","Tarea1","Prueba1$");
-					Sincronizador.waitSyncro(9500);
-					//Sincronizador.waitSyncro(1000);
-					comunicacionWS.limpiarEntrada();
-					Sincronizador.waitSyncro(9500);
-					//Sincronizador.waitSyncro(1000);
-					//appLegada.crearTareaEspecifica("12","13","Tarea2","Prueba de tarea 2");
-					//comunicacionWS.limpiarEntrada();
-					System.out.println("Tarea creada");
+					crearEspecifica();
+					//crearGeneral();
 				} catch (Exception e1) {
 		            e1.printStackTrace();
 		        }
 			}
 		});
 		
-		JButton btnGeneral = new JButton("Ver especificas");
+		JButton btnGeneral = new JButton("Ver tareas");
 		btnGeneral.setFont(new Font("Tahoma", Font.BOLD, 13));
 		btnGeneral.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					appLegada.cargarListadoTareasEspecificas();
+					//appLegada.cargarListadoTareasGenerales();
 					Sincronizador.waitSyncro(7500);
 					comunicacionWS.limpiarEntrada();
 					Sincronizador.waitSyncro(7500);
-					mostrarTareasEspecificas();
+					mostrarTareas();
 				} catch (Exception e1) {
 		            e1.printStackTrace();
 		        }
@@ -203,7 +228,7 @@ public class PantallaPrincipal extends JFrame {
 		contentPane.setLayout(gl_contentPane);
 	}
 	
-	private static void logearse() throws Exception {
+	private static boolean logearse() throws Exception {
     	comunicacionSP.conectar();
     	Thread.sleep(100);
         final String usuario = "grupo_09";
@@ -213,8 +238,10 @@ public class PantallaPrincipal extends JFrame {
         System.out.println("login realizado");
         if (exito) {
             System.out.println("Exito");
+            return true;
         } else {
             System.out.println("Fracaso");
+            return false;
         }
     }
 }
