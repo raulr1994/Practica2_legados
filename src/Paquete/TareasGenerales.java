@@ -65,9 +65,9 @@ public class TareasGenerales extends JFrame {
 		JButton btnAtras = new JButton("Atras");
 		btnAtras.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose();
-				MenuPrincipal mp = new MenuPrincipal();
-				mp.setVisible(true);
+				setVisible(false);
+				//MenuPrincipal mp = new MenuPrincipal();
+				//mp.setVisible(true);
 			}
 		});
 		btnAtras.setBounds(658, 456, 153, 47);
@@ -86,14 +86,7 @@ public class TareasGenerales extends JFrame {
 				DatosGeneral dg = new DatosGeneral();
 				dg.setModal(true);
 				dg.setVisible(true);
-				//dg.isModal();
-				//dg.setModalExclusionType(getModalExclusionType());
-				//dg.setModal(true);
 				
-				//Object o = new Object[2];
-				
-				//comprobamos si el RootPane es null para ver si hemos clickado el boton 
-				//aceptar o rechazar
 				if(dg.getRootPane() != null) {
 					modeloTabla.setColumnIdentifiers(new Object[] {"Fecha", "Descripcion"});
 					tablaGeneral.setModel(modeloTabla);

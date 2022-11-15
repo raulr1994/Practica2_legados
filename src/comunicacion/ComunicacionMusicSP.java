@@ -27,9 +27,9 @@ public class ComunicacionMusicSP {
         comunicacion.conectar(ip, puerto);
     }
 
-    public boolean login(String usuario, String contraseña) throws Exception {
+    public boolean login(String usuario, String contrase�a) throws Exception {
     	usuario = "grupo_09";
-    	contraseña = "secreto6";
+    	contrase�a = "secreto6";
         //Escribe el nombre de usuario
         //Si no es válido pulsa F3 y Enter para limpiar campos
         //y devolverá FALSE
@@ -50,7 +50,7 @@ public class ComunicacionMusicSP {
         //Si no es válida pulsa F3 y Enter para limpiar campos
         //y devolverá FALSE
         System.out.println("Comprobando contraseña");
-        comunicacion.escribirCadena(contraseña);
+        comunicacion.escribirCadena(contrase�a);
         comunicacion.enter();
         Thread.sleep(comunicacion.millis);
         if (comunicacion.buscarCadena("Password incorrect")) {

@@ -8,9 +8,18 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import comunicacion.ComunicacionMusicSP;
+import comunicacion.Tarea;
+import comunicacion.gestorTareas;
+import comunicacion.wc3270;
+
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Vector;
+
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
@@ -21,6 +30,12 @@ public class MenuPrincipal extends JFrame {
 
 	private JPanel contentPane;
 	private JTable tablaPrincipal;
+	static wc3270 comunicacionWS = wc3270.getInstancia();
+    static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
+    static gestorTareas appLegada = gestorTareas.getInstancia(comunicacionWS);
+	
+	
+	public ArrayList<Tarea> nuevoListado = null;
 	//private JButton btnOk;
 
 	/**
@@ -43,7 +58,7 @@ public class MenuPrincipal extends JFrame {
 	 * Create the frame.
 	 */
 	public MenuPrincipal() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 781, 583);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -72,21 +87,30 @@ public class MenuPrincipal extends JFrame {
 		lblNewLabel.setBounds(283, 11, 191, 35);
 		contentPane.add(lblNewLabel);
 		
+		
+		TareasGenerales tg = new TareasGenerales();
+		
 		JButton btnGeneral = new JButton("General");
 		btnGeneral.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				TareasGenerales tg = new TareasGenerales();
-				tg.setVisible(true);
+				
+				if(tg.getRootPane() != null) {
+					tg.setVisible(true);
+				}
 			}
 		});
 		btnGeneral.setBounds(592, 88, 142, 58);
 		contentPane.add(btnGeneral);
 		
+
+		TareasEspecificas te = new TareasEspecificas();
+		
 		JButton btnEspecifica = new JButton("Especifica");
 		btnEspecifica.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				TareasEspecificas te = new TareasEspecificas();
-				te.setVisible(true);
+				if(tg.getRootPane() != null) {
+					te.setVisible(true);
+				}
 			}
 		});
 		btnEspecifica.setBounds(592, 169, 142, 58);
@@ -95,30 +119,14 @@ public class MenuPrincipal extends JFrame {
 		JButton btnSalir = new JButton("Salir");
 		btnSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 				dispose();
+				comunicacionSP.finalizarPrograma();
 				Inicio i = new Inicio();
 				i.setVisible(true);
 			}
 		});
 		btnSalir.setBounds(592, 462, 142, 58);
 		contentPane.add(btnSalir);
-		
-		/*btnOk = new JButton("ok");
-		btnOk.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				int numCols = tablaPrincipal.getModel().getColumnCount();
-
-				Object [] fila = new Object[numCols]; 
-				        
-				 fila[0] = "unal";
-				 fila[1] = "420";
-				 fila[2] = "mundo";
-				
-				((DefaultTableModel) tablaPrincipal.getModel()).addRow(fila);
-			}
-		});
-		btnOk.setBounds(666, 349, 89, 23);
-		contentPane.add(btnOk);*/
 	}
 }

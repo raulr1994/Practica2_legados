@@ -5,6 +5,12 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import comunicacion.ComunicacionMusicSP;
+import comunicacion.PantallaPrincipal;
+import comunicacion.gestorTareas;
+import comunicacion.wc3270;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -20,6 +26,11 @@ public class Inicio extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtUsuario;
 	private JPasswordField jpass;
+	
+	
+	static wc3270 comunicacionWS = wc3270.getInstancia();
+    static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
+    static gestorTareas appLegada = gestorTareas.getInstancia(comunicacionWS);
 
 	/**
 	 * Launch the application.
@@ -36,12 +47,30 @@ public class Inicio extends JFrame {
 			}
 		});
 	}
+	
+	private static boolean logearse (String nombreUsuario, String nombrePasswd) throws Exception {
+    	comunicacionSP.conectar();
+    	Thread.sleep(100);
+        final String usuario = "grupo_09";
+        final String contraseña = "secreto6";
+        System.out.println("intentando login");
+        Boolean exito = comunicacionSP.login(nombreUsuario, nombrePasswd);
+        //System.out.println("El nombre de usuario es: " + nombreUsuario);
+        System.out.println("login realizado");
+        if (exito) {
+            System.out.println("Exito");
+            return true;
+        } else {
+            System.out.println("Fracaso");
+            return false;
+        }
+    }
 
 	/**
 	 * Create the frame.
 	 */
 	public Inicio() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 450, 216);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -72,9 +101,39 @@ public class Inicio extends JFrame {
 		JButton btnNewButton = new JButton("Acceder");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 				char[] passwd = jpass.getPassword();
 				String passwdfinal = new String(passwd);
-				if(txtUsuario.getText().equals("grupo_09")&& (passwdfinal.equals("secreto6"))) {
+				
+				
+				try {
+					comunicacionWS.assertConnected();
+		            if(logearse(txtUsuario.toString(), passwdfinal)){
+		            	System.out.println("Se ha podido loguear");
+		            	
+		            	try {
+							//PantallaPrincipal frame = new PantallaPrincipal();
+							//frame.setVisible(true);
+		            		dispose();
+							JOptionPane.showMessageDialog(null,  "Correcto inicio de sesion", "Logueo", JOptionPane.INFORMATION_MESSAGE);
+							MenuPrincipal p = new MenuPrincipal();
+							p.setVisible(true);
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+		            }
+		            else {
+		            	System.out.println("No se ha podido loguear");
+		            	JOptionPane.showMessageDialog(null, "Nombre Usuario o Contraseña incorrecto", "ERROR", JOptionPane.ERROR_MESSAGE);
+						txtUsuario.setText("");
+						jpass.setText("");
+						txtUsuario.requestFocus();
+		            }
+		        } catch (Exception e2) {
+		            e2.printStackTrace();
+		        }
+				
+				/*if(txtUsuario.getText().equals("grupo_09")&& (passwdfinal.equals("secreto6"))) {
 					dispose();
 					JOptionPane.showMessageDialog(null,  "Correcto inicio de sesion", "Logueo", JOptionPane.INFORMATION_MESSAGE);
 					MenuPrincipal p = new MenuPrincipal();
@@ -84,14 +143,26 @@ public class Inicio extends JFrame {
 					txtUsuario.setText("");
 					jpass.setText("");
 					txtUsuario.requestFocus();
-				}
+				}*/
+				
 			}
 		});
-		btnNewButton.setBounds(157, 130, 119, 36);
+		btnNewButton.setBounds(92, 130, 119, 36);
 		contentPane.add(btnNewButton);
 		
 		jpass = new JPasswordField();
 		jpass.setBounds(157, 95, 263, 25);
 		contentPane.add(jpass);
+		
+		JButton btnSalir = new JButton("Salir");
+		btnSalir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		btnSalir.setBounds(232, 130, 119, 36);
+		contentPane.add(btnSalir);
+		
+		
 	}
 }

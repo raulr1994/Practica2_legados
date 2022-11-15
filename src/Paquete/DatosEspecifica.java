@@ -7,6 +7,12 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import comunicacion.ComunicacionMusicSP;
+import comunicacion.Sincronizador;
+import comunicacion.gestorTareas;
+import comunicacion.wc3270;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -18,11 +24,16 @@ import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class DatosGeneral extends JDialog {
+public class DatosEspecifica extends JDialog {
 
 	public final JPanel contentPanel = new JPanel();
-	public JTextField txtFechaGen;
-	public JTextField txtDescGen;
+	public JTextField txtFechaEsp;
+	public JTextField txtDescEsp;
+	public JTextField txtNombreEsp;
+	
+	static wc3270 comunicacionWS = wc3270.getInstancia();
+    static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
+    static gestorTareas appLegada = gestorTareas.getInstancia(comunicacionWS);
 
 	/**
 	 * Launch the application.
@@ -42,10 +53,10 @@ public class DatosGeneral extends JDialog {
 	 * @param b 
 	 * @param actionListener 
 	 */
-	public DatosGeneral() {
+	public DatosEspecifica() {
 		//super(parent, modal);
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 746, 233);
+		setBounds(100, 100, 746, 271);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -53,34 +64,44 @@ public class DatosGeneral extends JDialog {
 		{
 			JLabel lblNewLabel = new JLabel("Fecha ( dd/mm):");
 			lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
-			lblNewLabel.setBounds(10, 60, 111, 34);
+			lblNewLabel.setBounds(10, 105, 111, 34);
 			contentPanel.add(lblNewLabel);
 		}
 		{
 			JLabel lblDescripcionmax = new JLabel("Descripcion (max 15 caracteres):");
 			lblDescripcionmax.setFont(new Font("Tahoma", Font.BOLD, 12));
-			lblDescripcionmax.setBounds(10, 105, 215, 34);
+			lblDescripcionmax.setBounds(10, 150, 215, 34);
 			contentPanel.add(lblDescripcionmax);
 		}
 		{
-			txtFechaGen = new JTextField();
-			txtFechaGen.setBounds(234, 65, 195, 26);
-			contentPanel.add(txtFechaGen);
-			txtFechaGen.setColumns(10);
+			txtFechaEsp = new JTextField();
+			txtFechaEsp.setBounds(234, 110, 195, 26);
+			contentPanel.add(txtFechaEsp);
+			txtFechaEsp.setColumns(10);
 		}
 		{
-			txtDescGen = new JTextField();
-			txtDescGen.setColumns(10);
-			txtDescGen.setBounds(235, 110, 466, 26);
-			contentPanel.add(txtDescGen);
+			txtDescEsp = new JTextField();
+			txtDescEsp.setColumns(10);
+			txtDescEsp.setBounds(235, 155, 466, 26);
+			contentPanel.add(txtDescEsp);
 		}
 		{
-			JLabel lblNewLabel_1 = new JLabel("A\u00F1adir Tarea General");
+			JLabel lblNewLabel_1 = new JLabel("A\u00F1adir Tarea Especifica");
 			lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
 			lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 20));
 			lblNewLabel_1.setBounds(213, 11, 291, 34);
 			contentPanel.add(lblNewLabel_1);
 		}
+		
+		JLabel lblNombremaxCaracteres = new JLabel("Nombre (max15 caracteres):");
+		lblNombremaxCaracteres.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblNombremaxCaracteres.setBounds(10, 56, 215, 34);
+		contentPanel.add(lblNombremaxCaracteres);
+		
+		txtNombreEsp = new JTextField();
+		txtNombreEsp.setColumns(10);
+		txtNombreEsp.setBounds(234, 61, 467, 26);
+		contentPanel.add(txtNombreEsp);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -92,11 +113,15 @@ public class DatosGeneral extends JDialog {
 						//comprobamos los campos
 						try 
 						{
-							if(txtFechaGen.getText().trim().length() == 0) {
+							if((txtNombreEsp.getText().trim().length() == 0)||(txtNombreEsp.getText().trim().length() > 15)) {
 								JOptionPane.showMessageDialog(null, "La fecha es invalida");
 								return;
 							}
-							if((txtDescGen.getText().trim().length() == 0)||(txtDescGen.getText().trim().length() > 15)) {
+							if(txtFechaEsp.getText().trim().length() == 0) {
+								JOptionPane.showMessageDialog(null, "La fecha es invalida");
+								return;
+							}
+							if((txtDescEsp.getText().trim().length() == 0)||(txtDescEsp.getText().trim().length() > 15)) {
 								JOptionPane.showMessageDialog(null, "La descripción es invalida");
 								return;
 							}
@@ -107,6 +132,33 @@ public class DatosGeneral extends JDialog {
 						{
 							JOptionPane.showMessageDialog(null, "Los datos ingresados no son validos");
 						}
+						
+						
+						String fechaAux;
+						fechaAux = txtFechaEsp.toString();
+						
+						int posicion;
+						String dia, mes;
+						
+						posicion = fechaAux.indexOf("/");
+						dia = fechaAux.substring(0,posicion);
+						fechaAux = fechaAux.substring(posicion + 1);
+						posicion = fechaAux.indexOf("/");
+						mes = fechaAux.substring(0, posicion);
+						
+						try {
+							appLegada.crearTareaEspecifica(mes, dia, txtNombreEsp.toString(), txtDescEsp.toString());
+							Sincronizador.waitSyncro(9500);
+							//Sincronizador.waitSyncro(1000);
+							comunicacionWS.limpiarEntrada();
+							Sincronizador.waitSyncro(9500);
+							//Sincronizador.waitSyncro(1000);
+							//appLegada.crearTareaEspecifica("12","13","Tarea2","Prueba de tarea 2");
+							//comunicacionWS.limpiarEntrada();
+							System.out.println("Tarea creada");
+						} catch (Exception e1) {
+				            e1.printStackTrace();
+				        }
 						
 					}
 				});
@@ -129,5 +181,4 @@ public class DatosGeneral extends JDialog {
 			}
 		}
 	}
-
 }

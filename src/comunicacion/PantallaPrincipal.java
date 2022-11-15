@@ -1,4 +1,4 @@
- package Paquete;
+ package comunicacion;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -46,7 +46,7 @@ public class PantallaPrincipal extends JFrame {
 			public void run() {
 				try {
 					comunicacionWS.assertConnected();
-		            if(logearse()){
+		            if(logearse(nombreUsuario, passwd)){
 		            	System.out.println("Se ha podido loguear");
 		            	try {
 							PantallaPrincipal frame = new PantallaPrincipal();
