@@ -1,10 +1,12 @@
 package comunicacion;
 
+import java.util.List;
+
 public interface wc3270Class {
 	
     StringBuilder leerPantalla();
     
-    String leerPantallaS();
+    List<String> leerPantallaS();
     
     void enter();
     

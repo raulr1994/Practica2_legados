@@ -2,6 +2,7 @@ package comunicacion;
 
 import Excepciones.TaskNuberUsedException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author apg29
@@ -69,7 +70,7 @@ public class gestorTareas {
     
     public void crearTareaEspecifica(String dd, String mm, String name, String description) {
     	//Sincronizador.waitSyncro(2);
-    	System.out.println("Creando tarea ");
+    	System.out.println("Creando tarea especifica");
     	assignTasks();
     	specificTask();
     	introducirDato(dd+mm); //Introducir fecha
@@ -78,8 +79,13 @@ public class gestorTareas {
     	comunicacionS.enter();
     }
     
-    public void crearTareaGeneral() {
-    	
+    public void crearTareaGeneral(String dd, String mm, String description) {
+    	System.out.println("Creando tarea general");
+    	assignTasks();
+    	generalTask();
+    	introducirDato(dd+mm); //Introducir fecha
+    	introducirDato(description); //Introducir descripción
+    	comunicacionS.enter();
     }
     
 	public void mostrarTarea(String array[]) {
@@ -155,8 +161,8 @@ public class gestorTareas {
     	Sincronizador.waitSyncro(1);
     }*/
 	
-	public void cargarListadoTareasEspecificas() { //Version 2
-    	System.out.println("cargandoListadoTareasEspecificas");
+	public ArrayList<Tarea> cargarListadoTareasEspecificas() { //Version 2
+    	
     	viewTask(); //Acceder al visualizador de tareas
     	specificTask(); //Visualizar el listado
         String numTask;
@@ -165,11 +171,14 @@ public class gestorTareas {
         String description;
         String date;
         int pos;
-        ListadoTareasEspecificas = new ArrayList<>(); //Borrar el contenido previo del listado
+        ListadoTareasEspecificas = new ArrayList<Tarea>(); //Borrar el contenido previo del listado
         do {
             comunicacionS.enter();
             comunicacionS.ascii();
-            String cadenaAux = comunicacionS.leerPantallaS();
+            //String cadenaAux = comunicacionS.leerPantallaS();
+            final List<String> lines = comunicacionS.leerPantallaS();
+            System.out.println("El listado de tareas especificas es");
+            System.out.println(lines);
             //System.out.println("Salida de lectura de tareas");
             //System.out.println(cadenaAux);
             
@@ -186,28 +195,125 @@ public class gestorTareas {
                 	String[] array2 = array[pos+i].split(" ");
                     numTask = array2[1];
                     typeTask = array2[2];
-                    date = array2[3];
-                    name= array2[4];
-                    description = array2[5];
-                    System.out.println("numTask "+numTask);
-                    System.out.println("typeTask "+typeTask);
-                    System.out.println("name "+name);
-                    System.out.println("description "+description);
-                    System.out.println("date "+date);
-                    
-                    ListadoTareasEspecificas.add(new Tarea(numTask, name,  description, date));
+                    if(typeTask.compareTo("SPECIFIC") == 1){
+                    	System.out.println("cargandoListadoTareasEspecificas");
+                    	date = array2[3];
+                        name= array2[4];
+                        description = array2[5];
+                        System.out.println("numTask "+numTask);
+                        System.out.println("typeTask "+typeTask);
+                        System.out.println("name "+name);
+                        System.out.println("description "+description);
+                        System.out.println("date "+date);
+                        ListadoTareasEspecificas.add(new Tarea(numTask, name,  description, date));
+                    }
+                    else if(typeTask.compareTo("GENERAL") == 1) {
+                    	System.out.println("cargandoListadoTareasGenerales");
+                    	date = array2[3];
+                    	description= array2[4];
+                        System.out.println("numTask "+numTask);
+                        System.out.println("typeTask "+typeTask);
+                        System.out.println("description "+description);
+                        System.out.println("date "+date);
+                        ListadoTareasGenerales.add(new Tarea(numTask, null,  description, date));
+                    }   
                 }
                 i++;
-            }*/
-            Sincronizador.waitSyncro(1);
+            }
+            Sincronizador.waitSyncro(1);*/
         } while (comunicacionS.hayMasTexto());
     	comunicacionS.enter();
-    	if(ListadoTareasEspecificas.isEmpty()) {
-    		System.out.println("No hay tareas guardadas");
+    	if(!ListadoTareasEspecificas.isEmpty()) {
+    		int numTareas = ListadoTareasEspecificas.size();
+    		System.out.println("El número de tareas especificas es " + numTareas);
+    		return ListadoTareasEspecificas;
+    	}
+    	else if(!ListadoTareasGenerales.isEmpty()){
+    		int numTareas = ListadoTareasGenerales.size();
+    		System.out.println("El número de tareas generales es " + numTareas);
+    		return ListadoTareasGenerales;
     	}
     	else {
+    		System.out.println("No hay tareas especificas guardadas");
+    		return null;
+    	}
+    	//Sincronizador.waitSyncro(100);
+    }
+	
+public ArrayList<Tarea> cargarListadoTareasGenerales() { //Version 2
+    	
+    	viewTask(); //Acceder al visualizador de tareas
+    	generalTask(); //Visualizar el listado
+        String numTask;
+        String typeTask;
+        String description;
+        String date;
+        int pos;
+        ListadoTareasGenerales = new ArrayList<Tarea>();
+        do {
+            comunicacionS.enter();
+            comunicacionS.ascii();
+            //String cadenaAux = comunicacionS.leerPantallaS();
+            final List<String> lines = comunicacionS.leerPantallaS();
+            System.out.println("El listado de tareas generales es");
+            System.out.println(lines);
+            //System.out.println("Salida de lectura de tareas");
+            //System.out.println(cadenaAux);
+            
+            /*String[] array = cadenaAux.split("data: "); //data: TASK Number: SPECIFIC Date Nombre Descriptioni
+            mostrarTarea(array);
+            pos = buscarIndicePrimeraTarea(array);
+            int n = array.length;
+            n--;
+            int i = 0;
+            while (i <= n) {
+                if (cadenaAux.contains("TASK "+ i)) { //Guardar tarea numero i-esima si contiene la cadena TASK
+                	System.out.println("Tarea encontrada");
+                	System.out.println("Tarea nueva guardada " + array[pos+i]);
+                	String[] array2 = array[pos+i].split(" ");
+                    numTask = array2[1];
+                    typeTask = array2[2];
+                    if(typeTask.compareTo("SPECIFIC") == 1){
+                    	System.out.println("cargandoListadoTareasEspecificas");
+                    	date = array2[3];
+                        name= array2[4];
+                        description = array2[5];
+                        System.out.println("numTask "+numTask);
+                        System.out.println("typeTask "+typeTask);
+                        System.out.println("name "+name);
+                        System.out.println("description "+description);
+                        System.out.println("date "+date);
+                        ListadoTareasEspecificas.add(new Tarea(numTask, name,  description, date));
+                    }
+                    else if(typeTask.compareTo("GENERAL") == 1) {
+                    	System.out.println("cargandoListadoTareasGenerales");
+                    	date = array2[3];
+                    	description= array2[4];
+                        System.out.println("numTask "+numTask);
+                        System.out.println("typeTask "+typeTask);
+                        System.out.println("description "+description);
+                        System.out.println("date "+date);
+                        ListadoTareasGenerales.add(new Tarea(numTask, null,  description, date));
+                    }   
+                }
+                i++;
+            }
+            Sincronizador.waitSyncro(1);*/
+        } while (comunicacionS.hayMasTexto());
+    	comunicacionS.enter();
+    	if(!ListadoTareasEspecificas.isEmpty()) {
     		int numTareas = ListadoTareasEspecificas.size();
-    		System.out.println("El número de tareas es " + numTareas);
+    		System.out.println("El número de tareas especificas es " + numTareas);
+    		return ListadoTareasEspecificas;
+    	}
+    	else if(!ListadoTareasGenerales.isEmpty()){
+    		int numTareas = ListadoTareasGenerales.size();
+    		System.out.println("El número de tareas generales es " + numTareas);
+    		return ListadoTareasGenerales;
+    	}
+    	else {
+    		System.out.println("No hay tareas especificas guardadas");
+    		return null;
     	}
     	//Sincronizador.waitSyncro(100);
     }

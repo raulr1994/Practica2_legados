@@ -121,10 +121,9 @@ public class wc3270 implements wc3270Class {
     
     
     @Override
-    public String leerPantallaS(){
+    public List<String> leerPantallaS(){
     	assertConnected();
     	String line= null;
-    	String pantalla="Hola";
     	final List<String> lines = new ArrayList<String>();
     	int nLinea = 0;
     	try {
@@ -140,20 +139,20 @@ public class wc3270 implements wc3270Class {
 	    			throw new RuntimeException("s3270 process not responding");
 	    		}
 	    		if(line.contains("TASK " + nLinea)) {
-	    		//if(line.startsWith("data: TASK " + nLinea)/* && line.endsWith("$")*/) {
 	    			System.out.println("Linea " + nLinea + " " + line);
 	    			lines.add(line);
 	    			nLinea++;
 	    		}
+	    		lines.add(line);
 	    		Sincronizador.waitSyncro(1000);
 	    	}
 	    	/*final int size = lines.size();
 	        if (size > 0) {
-	            return pantalla;
+	            return lines;
 	        } else {
 	            throw new RuntimeException("no output received by screen");
 	        }*/
-	    	return pantalla;
+	        return lines;
     	} catch (IOException ex) {
             return null;
         }  
