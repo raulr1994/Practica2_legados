@@ -9,10 +9,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import comunicacion.ComunicacionMusicSP;
-import comunicacion.Tarea;
-import comunicacion.gestorTareas;
-import comunicacion.wc3270;
+//import comunicacion.ComunicacionMusicSP;
+//import comunicacion.Tarea;
+//import comunicacion.gestorTareas;
+//import comunicacion.wc3270;
 
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
@@ -30,12 +30,12 @@ public class MenuPrincipal extends JFrame {
 
 	private JPanel contentPane;
 	private JTable tablaPrincipal;
-	static wc3270 comunicacionWS = wc3270.getInstancia();
-    static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
-    static gestorTareas appLegada = gestorTareas.getInstancia(comunicacionWS);
+	//static wc3270 comunicacionWS = wc3270.getInstancia();
+    //static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
+    //static gestorTareas appLegada = gestorTareas.getInstancia(comunicacionWS);
 	
 	
-	public ArrayList<Tarea> nuevoListado = null;
+	//public ArrayList<Tarea> nuevoListado = null;
 	//private JButton btnOk;
 
 	/**
@@ -121,7 +121,7 @@ public class MenuPrincipal extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				dispose();
-				comunicacionSP.finalizarPrograma();
+				//comunicacionSP.finalizarPrograma();
 				Inicio i = new Inicio();
 				i.setVisible(true);
 			}

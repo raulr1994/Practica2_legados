@@ -13,11 +13,11 @@ import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 
-import comunicacion.ComunicacionMusicSP;
-import comunicacion.Sincronizador;
-import comunicacion.Tarea;
-import comunicacion.gestorTareas;
-import comunicacion.wc3270;
+//import comunicacion.ComunicacionMusicSP;
+//import comunicacion.Sincronizador;
+//import comunicacion.Tarea;
+//import comunicacion.gestorTareas;
+//import comunicacion.wc3270;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -33,9 +33,9 @@ public class TareasEspecificas extends JFrame {
 	
 	
 	
-	static wc3270 comunicacionWS = wc3270.getInstancia();
-    static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
-    static gestorTareas appLegada = gestorTareas.getInstancia(comunicacionWS);
+	//static wc3270 comunicacionWS = wc3270.getInstancia();
+    //static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
+    //static gestorTareas appLegada = gestorTareas.getInstancia(comunicacionWS);
 
 	/**
 	 * Launch the application.
@@ -53,9 +53,9 @@ public class TareasEspecificas extends JFrame {
 		});
 	}
 	
-	public ArrayList<Tarea> nuevoListado = null;
+	//public ArrayList<Tarea> nuevoListado = null;
 	
-	public void mostrarTareasEspecificas() {
+	/*public void mostrarTareasEspecificas() {
 		ArrayList<Tarea> nuevoListadoTareas = appLegada.obtenerListadoTareasEspecificas();
 		nuevoListado = nuevoListadoTareas;
 		for(int i = 0; i < nuevoListadoTareas.size(); i++) {
@@ -66,7 +66,7 @@ public class TareasEspecificas extends JFrame {
             System.out.println(nuevoListado.get(i).getNumeroTarea() + " " + nuevoListado.get(i).getNombre() + " " + 
             		nuevoListado.get(i).getFecha() + " " + nuevoListado.get(i).getDescripcion());
         }*/
-	}
+	//}
 
 	/**
 	 * Create the frame.
@@ -146,7 +146,7 @@ public class TareasEspecificas extends JFrame {
 					modeloTablaEsp.addRow(v);*/
 					//o[0]= dg.txtFechaGen.getText();
 					
-					try {
+					/*try {
 						appLegada.cargarListadoTareasEspecificas();
 						Sincronizador.waitSyncro(7500);
 						comunicacionWS.limpiarEntrada();
@@ -159,12 +159,12 @@ public class TareasEspecificas extends JFrame {
 							v1.addElement(nuevoListado.get(i).getFecha());
 							v1.addElement(nuevoListado.get(i).getDescripcion());
 							modeloTablaEsp.addRow(v1);
-							/*System.out.println(nuevoListado.get(i).getNumeroTarea() + " " + nuevoListado.get(i).getNombre() + " " + 
-				            		nuevoListado.get(i).getFecha() + " " + nuevoListado.get(i).getDescripcion());*/
+							System.out.println(nuevoListado.get(i).getNumeroTarea() + " " + nuevoListado.get(i).getNombre() + " " + 
+				            		nuevoListado.get(i).getFecha() + " " + nuevoListado.get(i).getDescripcion());
 				        }
 					} catch (Exception e1) {
 			            e1.printStackTrace();
-			        }
+			        }*/
 					
 					 
 				}

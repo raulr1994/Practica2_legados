@@ -6,10 +6,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import comunicacion.ComunicacionMusicSP;
-import comunicacion.PantallaPrincipal;
-import comunicacion.gestorTareas;
-import comunicacion.wc3270;
+//import comunicacion.ComunicacionMusicSP;
+//import comunicacion.PantallaPrincipal;
+//import comunicacion.gestorTareas;
+//import comunicacion.wc3270;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -28,9 +28,9 @@ public class Inicio extends JFrame {
 	private JPasswordField jpass;
 	
 	
-	static wc3270 comunicacionWS = wc3270.getInstancia();
-    static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
-    static gestorTareas appLegada = gestorTareas.getInstancia(comunicacionWS);
+	//static wc3270 comunicacionWS = wc3270.getInstancia();
+    //static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
+    //static gestorTareas appLegada = gestorTareas.getInstancia(comunicacionWS);
 
 	/**
 	 * Launch the application.
@@ -49,21 +49,22 @@ public class Inicio extends JFrame {
 	}
 	
 	private static boolean logearse (String nombreUsuario, String nombrePasswd) throws Exception {
-    	comunicacionSP.conectar();
+    	//comunicacionSP.conectar();
     	Thread.sleep(100);
         final String usuario = "grupo_09";
         final String contraseña = "secreto6";
         System.out.println("intentando login");
-        Boolean exito = comunicacionSP.login(nombreUsuario, nombrePasswd);
+        //Boolean exito = comunicacionSP.login(nombreUsuario, nombrePasswd);
         //System.out.println("El nombre de usuario es: " + nombreUsuario);
         System.out.println("login realizado");
-        if (exito) {
+        /*if (exito) {
             System.out.println("Exito");
             return true;
         } else {
             System.out.println("Fracaso");
             return false;
-        }
+        }*/
+        return true;
     }
 
 	/**
@@ -107,7 +108,7 @@ public class Inicio extends JFrame {
 				
 				
 				try {
-					comunicacionWS.assertConnected();
+					//comunicacionWS.assertConnected();
 		            if(logearse(txtUsuario.toString(), passwdfinal)){
 		            	System.out.println("Se ha podido loguear");
 		            	

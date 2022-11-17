@@ -92,7 +92,7 @@ public class TareasGenerales extends JFrame {
 					tablaGeneral.setModel(modeloTabla);
 					
 					Vector<String> v = new Vector<String>();
-					v.addElement( dg.txtFechaGen.getText() );
+					//v.addElement( dg.txtFechaGen.getText() );
 					v.addElement( dg.txtDescGen.getText() );
 					
 					modeloTabla.addRow(v);
