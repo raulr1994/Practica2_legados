@@ -94,31 +94,7 @@ public class wc3270 implements wc3270Class {
         } finally {
             return cadena;
         }  
-    }*/
-    
-    /*private StringBuilder leerLetra() { //Leer letra a letra hasta detectar un $ cuando lo detecta, añadir un salto de línea
-    	StringBuilder cadena = new StringBuilder();
-    	byte[] arraybytes = null;
-    	try {
-            while (lectura.available() == 0) { //Espera a que se llene el buffer           	
-            }; 
-            if (lectura.available() > 0) { //Mientras alla algo que leer leera
-            	cadena.append((char) lectura.read(arraybytes,0,1)); //Lee un byte(letra)
-                Sincronizador.waitSyncro(0);
-            }
-        } catch (IOException ex) {
-            cadena = null;
-        } finally {
-        	
-            return cadena;
-        }
-    	
-    }
-    
-    public String leerPantallaZ() {
-    	
-    }*/
-    
+    }*/   
     
     @Override
     public List<String> leerPantallaS(){
@@ -126,7 +102,9 @@ public class wc3270 implements wc3270Class {
     	String line= null;
     	final List<String> lines = new ArrayList<String>();
     	int nLinea = 0;
+
     	try {
+    		while (lectura.available() == 0); //Espera a que se llene el buffer
 	    	while(lectura.available() > 0) {
 	    		try {
 	    		line = leerLectura.readLine();
@@ -140,19 +118,21 @@ public class wc3270 implements wc3270Class {
 	    		}
 	    		if(line.contains("TASK " + nLinea)) {
 	    			System.out.println("Linea " + nLinea + " " + line);
-	    			lines.add(line);
+	    			String[] array=line.split("$");
+	    			lines.add(array[0]);
 	    			nLinea++;
 	    		}
-	    		lines.add(line);
-	    		Sincronizador.waitSyncro(1000);
+	    		Sincronizador.waitSyncro(250); //500,800
 	    	}
-	    	/*final int size = lines.size();
+	    	System.out.println(lines.size() + " Tareas capturadas");
+	    	final int size = lines.size();
 	        if (size > 0) {
+	        	System.out.println(size + " Tareas capturadas");
 	            return lines;
 	        } else {
-	            throw new RuntimeException("no output received by screen");
-	        }*/
-	        return lines;
+	        	System.out.println("0 Tareas capturadas");
+	            return null;
+	        }
     	} catch (IOException ex) {
             return null;
         }  
@@ -204,7 +184,7 @@ public class wc3270 implements wc3270Class {
         } while (esOK);
         	//} while (leerPantalla().toString().contains(OK));
         //Espera una señal de OK o de MORE...
-        Sincronizador.waitSyncro(100);
+        Sincronizador.waitSyncro(200);
     }
     
     @Override
@@ -234,7 +214,7 @@ public class wc3270 implements wc3270Class {
 	
     @Override
     public void conectar(String ip, String puerto) throws RuntimeException {
-    	//System.out.println("Intento de conectar");
+    	System.out.println("Intento de conectar");
         String cadenaConexion = String.format(CADENA_CONEXION, ip, puerto);
         escribirLinea(cadenaConexion);
         enter();
@@ -244,7 +224,7 @@ public class wc3270 implements wc3270Class {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        //System.out.println("Exito al conectar");
+        System.out.println("Exito al conectar");
     }
     
     public void assertConnected() {
@@ -307,7 +287,7 @@ public class wc3270 implements wc3270Class {
 	        	esOK = linea.contains(OK);
 	        } while (esOK);
 	        moreEncontrado = pantalla.contains(MORE);
-	        Sincronizador.waitSyncro(100);
+	        Sincronizador.waitSyncro(200);
     	}
 		enter();
     	escribirCadena("3"); //Salir a mainMenu

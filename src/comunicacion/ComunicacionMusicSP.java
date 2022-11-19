@@ -27,9 +27,9 @@ public class ComunicacionMusicSP {
         comunicacion.conectar(ip, puerto);
     }
 
-    public boolean login(String usuario, String contrase�a) throws Exception {
+    public boolean login(String usuario, String contraseña) throws Exception {
     	usuario = "grupo_09";
-    	contrase�a = "secreto6";
+    	contraseña = "secreto6";
         //Escribe el nombre de usuario
         //Si no es válido pulsa F3 y Enter para limpiar campos
         //y devolverá FALSE
@@ -50,7 +50,7 @@ public class ComunicacionMusicSP {
         //Si no es válida pulsa F3 y Enter para limpiar campos
         //y devolverá FALSE
         System.out.println("Comprobando contraseña");
-        comunicacion.escribirCadena(contrase�a);
+        comunicacion.escribirCadena(contraseña);
         comunicacion.enter();
         Thread.sleep(comunicacion.millis);
         if (comunicacion.buscarCadena("Password incorrect")) {
@@ -84,7 +84,7 @@ public class ComunicacionMusicSP {
 	public void comenzarPrograma() throws Exception {
 		comunicacion.escribirCadena("tareas.c");
         comunicacion.enter();
-        Thread.sleep(500);
+        Thread.sleep(300);
         //comunicacion.verTodo();
         //System.out.println(verPantalla());
 		//System.out.println("Programa comenzado");
@@ -92,10 +92,10 @@ public class ComunicacionMusicSP {
     }
 
     public void finalizarPrograma() {
-    	comunicacion.escribirCadena("3");
+    	comunicacion.escribirCadena("3"); //Exit
     	comunicacion.enter();
     	Sincronizador.waitSyncro(1);
-        comunicacion.escribirCadena("off");
+        comunicacion.escribirCadena("off"); //Cerrar la sesión
         //comunicacion.enter();
         comunicacion.teclaFuncion(3);
         try {
@@ -104,7 +104,7 @@ public class ComunicacionMusicSP {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        System.out.println(verPantalla());
+        //System.out.println(verPantalla());
         System.out.println("Programa finalizado");
         comunicacion.cerrarProceso();
     }
