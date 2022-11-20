@@ -28,8 +28,8 @@ public class ComunicacionMusicSP {
     }
 
     public boolean login(String usuario, String contraseña) throws Exception {
-    	usuario = "grupo_09";
-    	contraseña = "secreto6";
+    	//usuario = "grupo_09";
+    	//contraseña = "secreto6";
         //Escribe el nombre de usuario
         //Si no es válido pulsa F3 y Enter para limpiar campos
         //y devolverá FALSE
@@ -37,7 +37,7 @@ public class ComunicacionMusicSP {
         comunicacion.escribirCadena(usuario);
         comunicacion.enter();
         Thread.sleep(comunicacion.millis);
-        System.out.println("Enter terminado");
+        //System.out.println("Enter terminado");
         if (comunicacion.buscarCadena("Userid is not authorized")) {
         	//System.out.println("Userid is not authorized");
             comunicacion.teclaFuncion(3);//Prueba
@@ -85,10 +85,6 @@ public class ComunicacionMusicSP {
 		comunicacion.escribirCadena("tareas.c");
         comunicacion.enter();
         Thread.sleep(300);
-        //comunicacion.verTodo();
-        //System.out.println(verPantalla());
-		//System.out.println("Programa comenzado");
-		//finalizarPrograma();
     }
 
     public void finalizarPrograma() {
@@ -96,7 +92,6 @@ public class ComunicacionMusicSP {
     	comunicacion.enter();
     	Sincronizador.waitSyncro(1);
         comunicacion.escribirCadena("off"); //Cerrar la sesión
-        //comunicacion.enter();
         comunicacion.teclaFuncion(3);
         try {
 			Thread.sleep(comunicacion.millis);
@@ -104,13 +99,9 @@ public class ComunicacionMusicSP {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        //System.out.println(verPantalla());
         System.out.println("Programa finalizado");
+        comunicacion.enter();
         comunicacion.cerrarProceso();
-    }
-
-    public String verPantalla() {
-        comunicacion.ascii();
-        return comunicacion.leerPantalla().toString();
+        //this.exit();
     }
 }
