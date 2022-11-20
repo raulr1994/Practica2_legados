@@ -1,12 +1,18 @@
 package Paquete;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import comunicacion.ComunicacionMusicSP;
+import comunicacion.Sincronizador;
+import comunicacion.gestorTareas;
+import comunicacion.wc3270;
 
 //import comunicacion.ComunicacionMusicSP;
 //import comunicacion.Sincronizador;
@@ -22,6 +28,8 @@ import java.awt.Frame;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 
 public class DatosEspecifica extends JDialog {
@@ -32,9 +40,9 @@ public class DatosEspecifica extends JDialog {
 	public JTextField txtNombreEsp;
 	private JTextField txtMes;
 	
-	//static wc3270 comunicacionWS = wc3270.getInstancia();
-    //static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
-    //static gestorTareas appLegada = gestorTareas.getInstancia(comunicacionWS);
+	static wc3270 comunicacionWS = wc3270.getInstancia();
+    static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
+    static gestorTareas appLegada = gestorTareas.getInstancia(comunicacionWS);
 
 	/**
 	 * Launch the application.
@@ -56,6 +64,18 @@ public class DatosEspecifica extends JDialog {
 	 */
 	public DatosEspecifica() {
 		//super(parent, modal);
+		addWindowListener(new WindowAdapter(){
+		    @Override
+		    public void windowClosing(WindowEvent et) {
+				//marcar el Jdialog como no accesible
+				comunicacionWS.devolverFlag();
+				setRootPane(null);
+				//sabemos que se hizo click en el boton cancelar
+				dispose();
+				TareasEspecificas.btnAgregarEsp.setBackground(Color.lightGray);
+				TareasEspecificas.btnAtras.setBackground(Color.lightGray);
+		    };
+		});
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 746, 323);
 		getContentPane().setLayout(new BorderLayout());
@@ -119,6 +139,7 @@ public class DatosEspecifica extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
+				okButton.setBackground(Color.lightGray);
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						//comprobamos los campos
@@ -196,44 +217,21 @@ public class DatosEspecifica extends JDialog {
 								return;
 							}
 							if((txtDescEsp.getText().trim().length() == 0)||(txtDescEsp.getText().trim().length() > 15)) {
-								JOptionPane.showMessageDialog(null, "La descripción introduccida es inválida", "ERROR", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(null, "La descripciï¿½n introduccida es invï¿½lida", "ERROR", JOptionPane.ERROR_MESSAGE);
 								return;
 							}
-							JOptionPane.showMessageDialog(null, "Los datos introduccidos son válidos");
+							JOptionPane.showMessageDialog(null, "Los datos introduccidos son vï¿½lidos");
 							//todo salio bien entonces ocultamos el Jdialog, sin destruirlo
 							setVisible(false);
+							try {
+								crearEspecifica(mesTxt,diaTxt,txtNombreEsp.getText(), txtDescEsp.getText());
+							} catch (Exception e1) {
+					            e1.printStackTrace();
+							}
 						}catch(Exception e1)
 						{
 							JOptionPane.showMessageDialog(null, "Los datos ingresados no son validos");
 						}
-						
-						
-						String fechaAux;
-						fechaAux = txtDia.toString();
-						
-						int posicion;
-						String dia, mes;
-						
-						posicion = fechaAux.indexOf("/");
-						dia = fechaAux.substring(0,posicion);
-						fechaAux = fechaAux.substring(posicion + 1);
-						posicion = fechaAux.indexOf("/");
-						mes = fechaAux.substring(0, posicion);
-						
-						try {
-							//appLegada.crearTareaEspecifica(mes, dia, txtNombreEsp.toString(), txtDescEsp.toString());
-							//Sincronizador.waitSyncro(9500);
-							//Sincronizador.waitSyncro(1000);
-							//comunicacionWS.limpiarEntrada();
-							//Sincronizador.waitSyncro(9500);
-							//Sincronizador.waitSyncro(1000);
-							//appLegada.crearTareaEspecifica("12","13","Tarea2","Prueba de tarea 2");
-							//comunicacionWS.limpiarEntrada();
-							System.out.println("Tarea creada");
-						} catch (Exception e1) {
-				            e1.printStackTrace();
-				        }
-						
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -242,17 +240,29 @@ public class DatosEspecifica extends JDialog {
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.setBackground(Color.lightGray);
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						//marcar el Jdialog como no accesible
+						comunicacionWS.devolverFlag();
 						setRootPane(null);
 						//sabemos que se hizo click en el boton cancelar
 						dispose();
+						TareasEspecificas.btnAgregarEsp.setBackground(Color.lightGray);
+						TareasEspecificas.btnAtras.setBackground(Color.lightGray);
 					}
 				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
 		}
+	}
+	
+	void crearEspecifica(String mes,String dia, String nombre,String descripcion) {
+		appLegada.crearTareaEspecifica(mes,dia,nombre,descripcion);
+		Sincronizador.waitSyncro(2500); //3500,9500
+		comunicacionWS.limpiarEntrada();
+		Sincronizador.waitSyncro(2500); //3500,9500
+		System.out.println("Tarea especifica creada");
 	}
 }

@@ -1,12 +1,19 @@
 package Paquete;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import comunicacion.ComunicacionMusicSP;
+import comunicacion.Sincronizador;
+import comunicacion.gestorTareas;
+import comunicacion.wc3270;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -16,6 +23,8 @@ import java.awt.Frame;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 
 public class DatosGeneral extends JDialog {
@@ -25,6 +34,10 @@ public class DatosGeneral extends JDialog {
 	public JTextField txtDescGen;
 	private JTextField txtMes;
 
+	static wc3270 comunicacionWS = wc3270.getInstancia();
+    static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
+    static gestorTareas appLegada = gestorTareas.getInstancia(comunicacionWS);
+	
 	/**
 	 * Launch the application.
 	 */
@@ -45,6 +58,18 @@ public class DatosGeneral extends JDialog {
 	 */
 	public DatosGeneral() {
 		//super(parent, modal);
+		addWindowListener(new WindowAdapter(){
+		    @Override
+		    public void windowClosing(WindowEvent et) {
+				//marcar el Jdialog como no accesible
+				comunicacionWS.devolverFlag();
+				setRootPane(null);
+				//sabemos que se hizo click en el boton cancelar
+				dispose();
+				TareasGenerales.btnAgregarGen.setBackground(Color.lightGray);
+				TareasGenerales.btnAtras.setBackground(Color.lightGray);
+		    };
+		});
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 746, 288);
 		getContentPane().setLayout(new BorderLayout());
@@ -100,6 +125,7 @@ public class DatosGeneral extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
+				okButton.setBackground(Color.lightGray);
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						//comprobamos los campos
@@ -174,12 +200,18 @@ public class DatosGeneral extends JDialog {
 								return;
 							}
 							if((txtDescGen.getText().trim().length() == 0)||(txtDescGen.getText().trim().length() > 15)) {
-								JOptionPane.showMessageDialog(null, "La descripción introduccida es inválida", "ERROR", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(null, "La descripciï¿½n introduccida es invï¿½lida", "ERROR", JOptionPane.ERROR_MESSAGE);
 								return;
 							}
-							JOptionPane.showMessageDialog(null, "Los datos introduccidos son válidos");
+							JOptionPane.showMessageDialog(null, "Los datos introduccidos son vï¿½lidos");
 							//todo salio bien entonces ocultamos el Jdialog, sin destruirlo
 							setVisible(false);
+							try {
+								crearGeneral(mesTxt,diaTxt,txtDescGen.getText());
+							} catch (Exception e1) {
+					            e1.printStackTrace();
+					        }
+							
 						}catch(Exception e1)
 						{
 							JOptionPane.showMessageDialog(null, "Los datos ingresados no son validos", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -193,12 +225,16 @@ public class DatosGeneral extends JDialog {
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.setBackground(Color.lightGray);
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						//marcar el Jdialog como no accesible
+						comunicacionWS.devolverFlag();
 						setRootPane(null);
 						//sabemos que se hizo click en el boton cancelar
 						dispose();
+						TareasGenerales.btnAgregarGen.setBackground(Color.lightGray);
+						TareasGenerales.btnAtras.setBackground(Color.lightGray);
 					}
 				});
 				cancelButton.setActionCommand("Cancel");
@@ -206,5 +242,11 @@ public class DatosGeneral extends JDialog {
 			}
 		}
 	}
-
+	void crearGeneral(String mes, String dia, String descripcion){
+		appLegada.crearTareaGeneral(mes,dia,descripcion);
+		Sincronizador.waitSyncro(2500); //3500,9500
+		comunicacionWS.limpiarEntrada();
+		Sincronizador.waitSyncro(2500); //3500,9500
+		System.out.println("Tarea general creada");
+	}
 }

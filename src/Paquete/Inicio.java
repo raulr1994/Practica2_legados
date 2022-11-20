@@ -1,10 +1,15 @@
 package Paquete;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import comunicacion.ComunicacionMusicSP;
+import comunicacion.gestorTareas;
+import comunicacion.wc3270;
 
 //import comunicacion.ComunicacionMusicSP;
 //import comunicacion.PantallaPrincipal;
@@ -18,6 +23,8 @@ import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 
@@ -28,9 +35,9 @@ public class Inicio extends JFrame {
 	private JPasswordField jpass;
 	
 	
-	//static wc3270 comunicacionWS = wc3270.getInstancia();
-    //static ComunicacionMusicSP comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
-    //static gestorTareas appLegada = gestorTareas.getInstancia(comunicacionWS);
+	static wc3270 comunicacionWS = null;//wc3270.getInstancia();
+    static ComunicacionMusicSP comunicacionSP = null; //ComunicacionMusicSP.getInstancia(comunicacionWS);
+    static gestorTareas appLegada = null; // gestorTareas.getInstancia(comunicacionWS);
 
 	/**
 	 * Launch the application.
@@ -49,28 +56,47 @@ public class Inicio extends JFrame {
 	}
 	
 	private static boolean logearse (String nombreUsuario, String nombrePasswd) throws Exception {
-    	//comunicacionSP.conectar();
+    	comunicacionSP.conectar();
     	Thread.sleep(100);
-        final String usuario = "grupo_09";
-        final String contrase�a = "secreto6";
+        //final String usuario = "grupo_09";
+        //final String contraseña = "secreto6";
+        System.out.println("El nombre del usuario es " +nombreUsuario);
+        System.out.println("La contraseña del usuario es " +nombrePasswd);
+        /*if(nombreUsuario.equals(usuario)) {
+        	System.out.println("El nombre del usuario coincide");
+        }
+        else {
+        	System.out.println("El nombre del usuario no coincide");
+        }
+        if(nombrePasswd.equals(contraseña)) {
+        	System.out.println("La contraseña del usuario coincide");
+        }
+        else {
+        	System.out.println("La contraseña del usuario no coincide");
+        }*/
         System.out.println("intentando login");
-        //Boolean exito = comunicacionSP.login(nombreUsuario, nombrePasswd);
-        //System.out.println("El nombre de usuario es: " + nombreUsuario);
+		Boolean exito = comunicacionSP.login(nombreUsuario, nombrePasswd);
+        System.out.println("El nombre de usuario es: " + nombreUsuario);
         System.out.println("login realizado");
-        /*if (exito) {
+        if (exito) {
             System.out.println("Exito");
             return true;
         } else {
             System.out.println("Fracaso");
             return false;
-        }*/
-        return true;
+        }
     }
 
 	/**
 	 * Create the frame.
 	 */
 	public Inicio() {
+		addWindowListener(new WindowAdapter(){
+	           @Override
+	           public void windowClosing(WindowEvent et) {
+	        	   	dispose();
+	           };
+	     });
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 450, 216);
 		contentPane = new JPanel();
@@ -100,16 +126,19 @@ public class Inicio extends JFrame {
 		contentPane.add(txtUsuario);
 		
 		JButton btnNewButton = new JButton("Acceder");
+		btnNewButton.setBackground(Color.lightGray);
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 				char[] passwd = jpass.getPassword();
 				String passwdfinal = new String(passwd);
-				
+				comunicacionWS = wc3270.getInstancia();
+			    comunicacionSP = ComunicacionMusicSP.getInstancia(comunicacionWS);
+			    appLegada = gestorTareas.getInstancia(comunicacionWS);
 				
 				try {
 					//comunicacionWS.assertConnected();
-		            if(logearse(txtUsuario.toString(), passwdfinal)){
+		            if(logearse(txtUsuario.getText(), passwdfinal)){
 		            	System.out.println("Se ha podido loguear");
 		            	
 		            	try {
@@ -125,7 +154,7 @@ public class Inicio extends JFrame {
 		            }
 		            else {
 		            	System.out.println("No se ha podido loguear");
-		            	JOptionPane.showMessageDialog(null, "Nombre Usuario o Contrase�a incorrecto", "ERROR", JOptionPane.ERROR_MESSAGE);
+		            	JOptionPane.showMessageDialog(null, "Nombre Usuario o Contrase�a incorrecto", "ERROR", JOptionPane.ERROR_MESSAGE);
 						txtUsuario.setText("");
 						jpass.setText("");
 						txtUsuario.requestFocus();
@@ -133,19 +162,6 @@ public class Inicio extends JFrame {
 		        } catch (Exception e2) {
 		            e2.printStackTrace();
 		        }
-				
-				/*if(txtUsuario.getText().equals("grupo_09")&& (passwdfinal.equals("secreto6"))) {
-					dispose();
-					JOptionPane.showMessageDialog(null,  "Correcto inicio de sesion", "Logueo", JOptionPane.INFORMATION_MESSAGE);
-					MenuPrincipal p = new MenuPrincipal();
-					p.setVisible(true);
-				}else {
-					JOptionPane.showMessageDialog(null, "Nombre Usuario o Contrase�a incorrecto", "ERROR", JOptionPane.ERROR_MESSAGE);
-					txtUsuario.setText("");
-					jpass.setText("");
-					txtUsuario.requestFocus();
-				}*/
-				
 			}
 		});
 		btnNewButton.setBounds(92, 130, 119, 36);
@@ -156,6 +172,7 @@ public class Inicio extends JFrame {
 		contentPane.add(jpass);
 		
 		JButton btnSalir = new JButton("Salir");
+		btnSalir.setBackground(Color.lightGray);
 		btnSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
