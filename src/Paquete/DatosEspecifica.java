@@ -259,10 +259,12 @@ public class DatosEspecifica extends JDialog {
 	}
 	
 	void crearEspecifica(String mes,String dia, String nombre,String descripcion) {
+		JOptionPane.showMessageDialog(null, "Se está creando la tarea Específica");
 		appLegada.crearTareaEspecifica(mes,dia,nombre,descripcion);
 		Sincronizador.waitSyncro(2500); //3500,9500
 		comunicacionWS.limpiarEntrada();
 		Sincronizador.waitSyncro(2500); //3500,9500
 		System.out.println("Tarea especifica creada");
+		JOptionPane.showMessageDialog(null, "Tarea Creada");
 	}
 }

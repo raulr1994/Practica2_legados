@@ -243,10 +243,12 @@ public class DatosGeneral extends JDialog {
 		}
 	}
 	void crearGeneral(String mes, String dia, String descripcion){
+		JOptionPane.showMessageDialog(null, "Se está creando la tarea General");
 		appLegada.crearTareaGeneral(mes,dia,descripcion);
 		Sincronizador.waitSyncro(2500); //3500,9500
 		comunicacionWS.limpiarEntrada();
 		Sincronizador.waitSyncro(2500); //3500,9500
 		System.out.println("Tarea general creada");
+		JOptionPane.showMessageDialog(null, "Tarea Creada");
 	}
 }
