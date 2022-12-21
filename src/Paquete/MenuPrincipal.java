@@ -32,6 +32,8 @@ import java.awt.Font;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 public class MenuPrincipal extends JFrame {
 
@@ -83,36 +85,24 @@ public class MenuPrincipal extends JFrame {
 	
 	public MenuPrincipal() {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 781, 583);
+		setBounds(100, 100, 532, 399);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 87, 531, 433);
-		contentPane.add(scrollPane);
-		
 		DefaultTableModel modelo = new DefaultTableModel();
-		JTable tablaPrincipal = new JTable(modelo);
-		tablaPrincipal.setModel(new DefaultTableModel(
-			new Object[][] {
-			},
-			new String[] {
-				"Nombre", "Fecha", "Descripcion"
-			}
-		));
-		scrollPane.setViewportView(tablaPrincipal);
 		
 		JLabel lblNewLabel = new JLabel("Menu Principal");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblNewLabel.setBounds(283, 11, 191, 35);
+		lblNewLabel.setBounds(149, 11, 191, 35);
 		contentPane.add(lblNewLabel);
 		
 		
 		TareasGenerales tg = new TareasGenerales();
+		btnGeneral.setFont(new Font("Tahoma", Font.BOLD, 16));
 		
 		//JButton btnGeneral = new JButton("General");
 		btnGeneral.setBackground(Color.lightGray);
@@ -134,11 +124,12 @@ public class MenuPrincipal extends JFrame {
 				}
 			}
 		});
-		btnGeneral.setBounds(592, 88, 142, 58);
+		btnGeneral.setBounds(56, 127, 177, 102);
 		contentPane.add(btnGeneral);
 		
 
 		TareasEspecificas te = new TareasEspecificas();
+		btnEspecifica.setFont(new Font("Tahoma", Font.BOLD, 16));
 		
 		//JButton btnEspecifica = new JButton("Especifica");
 		btnEspecifica.setBackground(Color.lightGray);
@@ -157,7 +148,7 @@ public class MenuPrincipal extends JFrame {
 					}
 			}
 		});
-		btnEspecifica.setBounds(592, 169, 142, 58);
+		btnEspecifica.setBounds(274, 127, 165, 102);
 		contentPane.add(btnEspecifica);
 		
 		//JButton btnSalir = new JButton("Salir");
@@ -173,7 +164,12 @@ public class MenuPrincipal extends JFrame {
 				}
 			}
 		});
-		btnSalir.setBounds(592, 462, 142, 58);
+		btnSalir.setBounds(198, 276, 142, 58);
 		contentPane.add(btnSalir);
+		
+		JLabel lblNewLabel_1 = new JLabel("Elegir tipo de tarea:");
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		lblNewLabel_1.setBounds(56, 67, 191, 36);
+		contentPane.add(lblNewLabel_1);
 	}
 }
